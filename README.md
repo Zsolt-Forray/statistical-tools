@@ -31,7 +31,7 @@ Available quotes:
 
 Daily Stock Quotes Sample:
 
-![Screenshot](png\stock_quotes.png)
+![Screenshot](/png/stock_quotes.png)
 
 ## Beta Calculator
 
@@ -49,7 +49,7 @@ print(beta)
 ### Output
 Stock's Beta Coefficient and Beta Chart.
 
-![Screenshot](png\beta_out.png)
+![Screenshot](/png/beta_out.png)
 
 ## Historical Volatility Calculator
 
@@ -67,7 +67,7 @@ print(hv_vals)
 ### Output
 Tuple object, the first HV value for the stock, the second HV value for S&P500 index and HV Chart.
 
-![Screenshot](png\hv_out.png)
+![Screenshot](/png/hv_out.png)
 
 ## Correlation Coefficient Calculator
 
@@ -85,7 +85,7 @@ print(corr)
 ### Output
 Stocks' Correlation Coefficient and Correlation Chart.
 
-![Screenshot](png\corr_out.png)
+![Screenshot](/png/corr_out.png)
 
 ## LICENSE
 MIT
