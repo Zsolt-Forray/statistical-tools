@@ -8,7 +8,7 @@ of returns for a given security over a given period of time.
 
 |
 | Input parameter(s):   Ticker Symbol, Period
-|                       eg. AMAT, 30
+|                       eg. "AMAT", 30
 |
 
 Ticker Symbol:  Stock symbol from the 'Valid Ticker Symbols' list.
@@ -31,8 +31,8 @@ from matplotlib import ticker as mticker
 from datetime import datetime
 
 # Path settings
-base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-db_path = os.path.join(base_path, "DB/DailyQuotes/{}.txt")
+base_path = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(base_path, "DailyQuotes/{}.txt")
 
 class InvalidTickersError(Exception):
     pass
@@ -85,6 +85,7 @@ def hv_calc(quotes_date, stock_close_price, snp_close_price, period, ticker):
     plt.legend((p_hv1[0], p_hv2[0]), (ticker, "S&P 500 Index"), loc=2)
     plt.grid(True)
     plt.show()
+    return tuple((ann_stock_hv, ann_snp_hv))
 
 
 def run(ticker, period):
@@ -104,9 +105,13 @@ def run(ticker, period):
 
         period = int(period)
         quotes_date, stock_close_price, snp_close_price = read_quotes(ticker)
-        hv_calc(quotes_date, stock_close_price, snp_close_price, period, ticker)
+        ann_stock_hv, ann_snp_hv = hv_calc(quotes_date, stock_close_price, snp_close_price, period, ticker)
+        return tuple((ann_stock_hv, ann_snp_hv))
 
     except InvalidTickersError:
         print("[Error] Invalid ticker, please select one of them: (AMAT, C, JD, MSFT, MU, TWTR)")
     except PeriodError:
         print("[Error] Period must be integer, greater than 1 and less than 100")
+
+if __name__ == "__main__":
+    res = run("MU", 30)

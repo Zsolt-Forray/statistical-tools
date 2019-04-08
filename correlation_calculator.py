@@ -8,7 +8,7 @@ relationship between two stocks.
 
 |
 | Input parameter(s):   Ticker Symbol #1, Ticker Symbol #2
-|                       eg. AMAT, MU
+|                       eg. "AMAT", "MU"
 |
 
 Ticker Symbol:  Stock symbol from the 'Valid Ticker Symbols' list.
@@ -30,8 +30,8 @@ from datetime import datetime
 import re
 
 # Path settings
-base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-db_path = os.path.join(base_path, "DB/DailyQuotes/{}.txt")
+base_path = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(base_path, "DailyQuotes/{}.txt")
 
 class InvalidTickersError(Exception):
     pass
@@ -75,6 +75,7 @@ def corr_calc(base_date, quotes_date, stock1_close_price, stock2_close_price, ti
     plt.legend((p_perf1[0], p_perf2[0]), (ticker1, ticker2), loc=2)
     plt.grid(True)
     plt.show()
+    return corr
 
 
 def run(ticker1, ticker2):
@@ -87,7 +88,11 @@ def run(ticker1, ticker2):
             raise InvalidTickersError()
 
         base_date, quotes_date, stock1_close, stock2_close = read_quotes(ticker1, ticker2)
-        corr_calc(base_date, quotes_date, stock1_close, stock2_close, ticker1, ticker2)
+        corr = corr_calc(base_date, quotes_date, stock1_close, stock2_close, ticker1, ticker2)
+        return corr
 
     except InvalidTickersError:
         print("[Error] Invalid ticker, please select them from this list: (AMAT, C, JD, MSFT, MU, TWTR)")
+
+if __name__ == "__main__":
+    corr = run("MU", "C")

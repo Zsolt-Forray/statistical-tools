@@ -7,7 +7,7 @@ Calculates 'Beta', a measure of a stock's volatility in relation to the market.
 
 |
 | Input parameter(s):   Ticker Symbol
-|                       eg. AMAT
+|                       eg. "AMAT"
 |
 
 Ticker Symbol:  Stock symbol from the 'Valid Ticker Symbols' list.
@@ -25,8 +25,8 @@ import os
 from matplotlib import pyplot as plt
 
 # Path settings
-base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-db_path = os.path.join(base_path, "DB/DailyQuotes/{}.txt")
+base_path = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(base_path, "DailyQuotes/{}.txt")
 
 class InvalidTickersError(Exception):
     pass
@@ -73,7 +73,7 @@ def beta_calc(quotes_date, stock_close_price, snp_close_price, ticker):
     plt.legend((p_obs[0], p_regl[0]), ("Return Observations", "Regression Line"))
     plt.grid(True)
     plt.show()
-
+    return beta
 
 def run(ticker):
     val_tickers = ("AMAT", "C", "JD", "MSFT", "MU", "TWTR")
@@ -84,7 +84,11 @@ def run(ticker):
             raise InvalidTickersError()
 
         quotes_date, stock_close_price, snp_close_price = read_quotes(ticker)
-        beta_calc(quotes_date, stock_close_price, snp_close_price, ticker)
+        beta = beta_calc(quotes_date, stock_close_price, snp_close_price, ticker)
+        return beta
 
     except InvalidTickersError:
         print("[Error] Invalid ticker, please select one of them: (AMAT, C, JD, MSFT, MU, TWTR)")
+
+if __name__ == "__main__":
+    beta = run("MU")
