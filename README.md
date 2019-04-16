@@ -22,7 +22,7 @@ git clone https://github.com/Zsolt-Forray/statistical-tools.git
 5.  Import the selected tool.
 
 Note:  
-This project uses sample stock quotes from the `DailyQuotes` folder. If you want, you can add other stock quotes to this folder. If you add stock quotes having different timeframe, do not forget to update the S&P 500 quotes accordingly.
+This project uses sample stock quotes from the `DailyQuotes` folder. If you want, you can add other stock quotes to this folder. If you add stock quotes having different timeframe, do not forget to update the other quotes accordingly.
 
 Available quotes:  
 +   Applied Materials (AMAT)
