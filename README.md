@@ -1,5 +1,9 @@
 # statistical-tools
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3885370dc5344aeba98c088256d4865f)](https://www.codacy.com/app/forray.zsolt/statistical-tools?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Zsolt-Forray/statistical-tools&amp;utm_campaign=Badge_Grade)
+[![Maintainability](https://api.codeclimate.com/v1/badges/f07490266640ae1be0a9/maintainability)](https://codeclimate.com/github/Zsolt-Forray/statistical-tools/maintainability)
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+
 ## Description
 This project includes different statistical measures (Beta and Historical Volatility) to quantify risk and Correlation Coefficient that is used for the mitigation of risk arising from equity selection.
 
