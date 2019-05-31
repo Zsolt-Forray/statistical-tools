@@ -1,7 +1,8 @@
 # statistical-tools
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3885370dc5344aeba98c088256d4865f)](https://www.codacy.com/app/forray.zsolt/statistical-tools?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Zsolt-Forray/statistical-tools&amp;utm_campaign=Badge_Grade)
-[![Maintainability](https://api.codeclimate.com/v1/badges/f07490266640ae1be0a9/maintainability)](https://codeclimate.com/github/Zsolt-Forray/statistical-tools/maintainability)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/3885370dc5344aeba98c088256d4865f)](https://www.codacy.com/app/forray.zsolt/statistical-tools?utm_source=github.com&utm_medium=referral&utm_content=Zsolt-Forray/statistical-tools&utm_campaign=Badge_Coverage)
+[![Build Status](https://travis-ci.com/Zsolt-Forray/statistical-tools.svg?branch=master)](https://travis-ci.com/Zsolt-Forray/statistical-tools)
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
 ## Description
@@ -93,3 +94,8 @@ Stocks' Correlation Coefficient and Correlation Chart.
 
 ## LICENSE
 MIT
+
+## Contributions
+Contributions to Statistical Tools are always welcome.  
+If you have questions, suggestions or want to improve this repository, please create an [issue](https://github.com/Zsolt-Forray/statistical-tools/issues) or [pull requests](https://github.com/Zsolt-Forray/statistical-tools/pulls).  
+This repo is maintained by Zsolt Forray (forray.zsolt@gmail.com).
