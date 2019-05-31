@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 """
 ---------------------------------------------------------------------------
                     HISTORICAL VOLATILITY CALCULATOR
@@ -112,6 +114,3 @@ def run(ticker, period):
         print("[Error] Invalid ticker, please select one of them: (AMAT, C, JD, MSFT, MU, TWTR)")
     except PeriodError:
         print("[Error] Period must be integer, greater than 1 and less than 100")
-
-if __name__ == "__main__":
-    res = run("MU", 30)
