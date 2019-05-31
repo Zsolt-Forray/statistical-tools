@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 """
 -------------------------------------------------------------------------------
                                 BETA CALCULATOR
@@ -89,6 +91,3 @@ def run(ticker):
 
     except InvalidTickersError:
         print("[Error] Invalid ticker, please select one of them: (AMAT, C, JD, MSFT, MU, TWTR)")
-
-if __name__ == "__main__":
-    beta = run("MU")
