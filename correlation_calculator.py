@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 """
 -------------------------------------------------------------------
                 CORRELATION COEFFICIENT CALCULATOR
@@ -93,6 +95,3 @@ def run(ticker1, ticker2):
 
     except InvalidTickersError:
         print("[Error] Invalid ticker, please select them from this list: (AMAT, C, JD, MSFT, MU, TWTR)")
-
-if __name__ == "__main__":
-    corr = run("MU", "C")
