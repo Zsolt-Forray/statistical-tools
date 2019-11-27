@@ -70,7 +70,8 @@ class Correlation:
     def get_base_date(stock1_quotes_df):
         return stock1_quotes_df.index[0]
 
-    def calc_close_price(self, stock1_quotes_df, stock2_quotes_df):
+    @staticmethod
+    def calc_close_price(stock1_quotes_df, stock2_quotes_df):
         stock1_close_price = Correlation.get_close_price(stock1_quotes_df)
         stock2_close_price = Correlation.get_close_price(stock2_quotes_df)
         return stock1_close_price, stock2_close_price
@@ -117,7 +118,7 @@ class Correlation:
             stock1_quotes_df = self.read_quotes(self.ticker1)
             stock2_quotes_df = self.read_quotes(self.ticker2)
             stock1_close_price, stock2_close_price \
-                    = self.calc_close_price(stock1_quotes_df, stock2_quotes_df)
+                    = Correlation.calc_close_price(stock1_quotes_df, stock2_quotes_df)
             stock1_perf, stock2_perf \
                     = Correlation.calc_performance(stock1_close_price, stock2_close_price)
             stock1_log_return, stock2_log_return \
