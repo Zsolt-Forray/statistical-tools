@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+
 """
 ---------------------------------------------------------------------------
                     HISTORICAL VOLATILITY CALCULATOR
@@ -23,6 +24,14 @@ Remark: Input parameters must be separated by comma(s).
 ---------------------------------------------------------------------------
 """
 
+
+__author__  = 'Zsolt Forray'
+__license__ = 'MIT'
+__version__ = '0.0.1'
+__date__    = '27/11/2019'
+__status__  = 'Development'
+
+
 import pandas as pd
 import numpy as np
 import os
@@ -32,85 +41,99 @@ from matplotlib import dates as mdates
 from matplotlib import ticker as mticker
 from datetime import datetime
 
-# Path settings
-base_path = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(base_path, "DailyQuotes/{}.txt")
 
 class InvalidTickersError(Exception):
     pass
 
+
 class PeriodError(Exception):
     pass
 
-def read_quotes(ticker):
-    snp500_symbol = "^GSPC"
-    stock_quotes_df = pd.read_csv(db_path.format(ticker), index_col="Date")
-    snp_quotes_df = pd.read_csv(db_path.format(snp500_symbol), index_col="Date")
 
-    stock_close_price = stock_quotes_df["Adj Close"]
-    snp_close_price = snp_quotes_df["Adj Close"]
+class HVol:
+    def __init__(self, ticker, period):
+        self.ticker = ticker
+        self.period = period
+        # Path settings
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        self.db_path = os.path.join(base_path, "DailyQuotes/{}.txt")
 
-    # Set proper date format for the Chart
-    date_format = "%Y-%m-%d"
-    quotes_date = [datetime.strptime(i, date_format) for i in stock_quotes_df.index]
-    quotes_date = matplotlib.dates.date2num(quotes_date)
+    def read_quotes(self, symbol):
+        return pd.read_csv(self.db_path.format(symbol), index_col="Date")
 
-    return quotes_date, stock_close_price, snp_close_price
+    def get_close_price(self, price_data_df):
+        return price_data_df["Adj Close"]
 
-def hv_calc(quotes_date, stock_close_price, snp_close_price, period, ticker):
-    # Stock
-    stock_log_return = np.log(stock_close_price / stock_close_price.shift(1))
-    stock_std_df = stock_log_return.rolling(window=period, center=False).std(ddof=1)
-    ann_stock_std_df = np.sqrt(252) * stock_std_df * 100
-    ann_stock_hv = "{0:.2f}%".format(ann_stock_std_df.iloc[-1])
+    def get_quotes_date(self, stock_quotes_df):
+        # Set proper date format for the Chart
+        date_format = "%Y-%m-%d"
+        quotes_date = [datetime.strptime(i, date_format) for i in stock_quotes_df.index]
+        return matplotlib.dates.date2num(quotes_date)
 
-    # S&P 500 Index
-    snp_log_return = np.log(snp_close_price / snp_close_price.shift(1))
-    snp_std_df = snp_log_return.rolling(window=period, center=False).std(ddof=1)
-    ann_snp_std_df = np.sqrt(252) * snp_std_df * 100
-    ann_snp_hv = "{0:.2f}%".format(ann_snp_std_df.iloc[-1])
+    def calc_log_return(self, snp_quotes_df, stock_quotes_df):
+        snp_close_price = self.get_close_price(snp_quotes_df)
+        stock_close_price = self.get_close_price(stock_quotes_df)
 
-    # print("Stock Annual Volatility: ", ann_stock_hv)
-    # print("S&P 500 Annual Volatility: ", ann_snp_hv)
+        stock_log_return = np.log(stock_close_price / stock_close_price.shift(1))
+        snp_log_return = np.log(snp_close_price / snp_close_price.shift(1))
+        return snp_log_return, stock_log_return
 
-    # Drawing Chart
-    p_hv1 = plt.plot(quotes_date, ann_stock_std_df, "b")
-    p_hv2 = plt.plot(quotes_date, ann_snp_std_df, "r")
-    # Format "Date" axis
-    plt.gca().xaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+    def calc_annual_hv_series(self, log_return):
+        std_df = log_return.rolling(window=self.period, center=False).std(ddof=1)
+        return np.sqrt(252) * std_df * 100
 
-    plt.title(f"{ticker} vs. S&P 500 Index Historical Volatility\n" +
-            f"(Stock HV: {ann_stock_hv} | Index HV: {ann_snp_hv} | Period: {period})")
-    plt.ylabel("Annual Historical Volatility (%)")
-    plt.xlabel("Date")
-    plt.legend((p_hv1[0], p_hv2[0]), (ticker, "S&P 500 Index"), loc=2)
-    plt.grid(True)
-    plt.show()
-    return tuple((ann_stock_hv, ann_snp_hv))
+    def calc_annual_hv(self, ann_std_df):
+        return "{0:.2f}%".format(ann_std_df.iloc[-1])
+
+    def draw_chart(self, quotes_date, ann_stock_std_df, ann_stock_hv, \
+                   ann_snp_std_df, ann_snp_hv):
+        # Drawing Chart
+        p_hv1 = plt.plot(quotes_date, ann_stock_std_df, "b")
+        p_hv2 = plt.plot(quotes_date, ann_snp_std_df, "r")
+        # Format "Date" axis
+        plt.gca().xaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+
+        plt.title(f"{self.ticker} vs. S&P 500 Index Historical Volatility\n"
+                  f"(Stock HV: {ann_stock_hv} | Index HV: {ann_snp_hv} | Period: {self.period})")
+        plt.ylabel("Annual Historical Volatility (%)")
+        plt.xlabel("Date")
+        plt.legend((p_hv1[0], p_hv2[0]), (self.ticker, "S&P 500 Index"), loc=2)
+        plt.grid(True)
+        plt.show()
+
+    def run_app(self):
+        # There are pricing data for the followings
+        val_tickers = ("AMAT", "C", "JD", "MSFT", "MU", "TWTR")
+        try:
+            if self.ticker not in val_tickers:
+                raise InvalidTickersError()
+
+            elif float(self.period).is_integer() == False:
+                raise PeriodError()
+
+            elif float(self.period) < 2 or float(self.period) >= 100:
+                raise PeriodError()
+
+            snp_quotes_df = self.read_quotes("^GSPC")
+            stock_quotes_df = self.read_quotes(self.ticker)
+            snp_log_return, stock_log_return \
+                        = self.calc_log_return(snp_quotes_df, stock_quotes_df)
+            ann_snp_std_df = self.calc_annual_hv_series(snp_log_return)
+            ann_stock_std_df = self.calc_annual_hv_series(stock_log_return)
+            ann_snp_hv = self.calc_annual_hv(ann_snp_std_df)
+            ann_stock_hv = self.calc_annual_hv(ann_stock_std_df)
+            quotes_date = self.get_quotes_date(stock_quotes_df)
+            self.draw_chart(quotes_date, ann_stock_std_df, ann_stock_hv, \
+                            ann_snp_std_df, ann_snp_hv)
+            return ann_stock_hv, ann_snp_hv
+
+        except InvalidTickersError:
+            print("[Error] Invalid ticker, please select one of them: (AMAT, C, JD, MSFT, MU, TWTR)")
+        except PeriodError:
+            print("[Error] Period must be integer, greater than 1 and less than 100")
 
 
-def run(ticker, period):
-    val_tickers = ("AMAT", "C", "JD", "MSFT", "MU", "TWTR")
-    try:
-
-        ticker = str.upper(ticker)
-
-        if ticker not in val_tickers:
-            raise InvalidTickersError()
-
-        elif float(period).is_integer() == False:
-            raise PeriodError()
-
-        elif float(period) < 2 or float(period) >= 100:
-            raise PeriodError()
-
-        period = int(period)
-        quotes_date, stock_close_price, snp_close_price = read_quotes(ticker)
-        ann_stock_hv, ann_snp_hv = hv_calc(quotes_date, stock_close_price, snp_close_price, period, ticker)
-        return tuple((ann_stock_hv, ann_snp_hv))
-
-    except InvalidTickersError:
-        print("[Error] Invalid ticker, please select one of them: (AMAT, C, JD, MSFT, MU, TWTR)")
-    except PeriodError:
-        print("[Error] Period must be integer, greater than 1 and less than 100")
+if __name__ == "__main__":
+    hv = HVol("MU", 30)
+    hv.run_app()

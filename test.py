@@ -1,5 +1,18 @@
 #!/usr/bin/python3
 
+
+"""
+Test for the statistical tools
+"""
+
+
+__author__  = 'Zsolt Forray'
+__license__ = 'MIT'
+__version__ = '0.0.1'
+__date__    = '27/11/2019'
+__status__  = 'Development'
+
+
 import unittest
 import beta_calculator as bc
 import correlation_calculator as cc
@@ -8,35 +21,44 @@ import historical_volatility_calculator as hvc
 
 class TestBeta(unittest.TestCase):
     def test_beta(self):
-        self.assertEqual(bc.run("MU"), 1.82)
+        beta = bc.Beta("MU")
+        self.assertEqual(beta.run_app(), 1.82)
 
     def test_invalid_ticker(self):
-        self.assertEqual(bc.run("KO"), None)
+        beta = bc.Beta("KO")
+        self.assertEqual(beta.run_app(), None)
 
 
 class TestCorrelation(unittest.TestCase):
     def test_correlation(self):
-        self.assertEqual(cc.run("MU", "C"), 0.34)
+        corr = cc.Correlation("MU", "C")
+        self.assertEqual(corr.run_app(), 0.34)
 
     def test_invalid_ticker(self):
-        self.assertEqual(cc.run("F", "KO"), None)
+        corr = cc.Correlation("F", "KO")
+        self.assertEqual(corr.run_app(), None)
 
 
-class TestHistoricalVolatility(unittest.TestCase):
+class TestHVol(unittest.TestCase):
     def test_hv(self):
-        self.assertEqual(hvc.run("MU", 30), ("58.52%", "26.71%"))
+        hv = hvc.HVol("MU", 30)
+        self.assertEqual(hv.run_app(), ("58.52%", "26.71%"))
 
     def test_invalid_ticker(self):
-        self.assertEqual(hvc.run("F", 40), None)
+        hv = hvc.HVol("F", 40)
+        self.assertEqual(hv.run_app(), None)
 
     def test_float_period(self):
-        self.assertEqual(hvc.run("AMAT", 40.45), None)
+        hv = hvc.HVol("AMAT", 40.45)
+        self.assertEqual(hv.run_app(), None)
 
     def test_period_below(self):
-        self.assertEqual(hvc.run("AMAT", 1), None)
+        hv = hvc.HVol("AMAT", 1)
+        self.assertEqual(hv.run_app(), None)
 
     def test_period_above(self):
-        self.assertEqual(hvc.run("AMAT", 300), None)
+        hv = hvc.HVol("AMAT", 300)
+        self.assertEqual(hv.run_app(), None)
 
 
 if __name__ == "__main__":

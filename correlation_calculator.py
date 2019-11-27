@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+
 """
 -------------------------------------------------------------------
                 CORRELATION COEFFICIENT CALCULATOR
@@ -21,6 +22,14 @@ Remark: Input parameters must be separated by comma(s).
 -------------------------------------------------------------------
 """
 
+
+__author__  = 'Zsolt Forray'
+__license__ = 'MIT'
+__version__ = '0.0.1'
+__date__    = '27/11/2019'
+__status__  = 'Development'
+
+
 import pandas as pd
 import numpy as np
 import os
@@ -31,67 +40,93 @@ from matplotlib import ticker as mticker
 from datetime import datetime
 import re
 
-# Path settings
-base_path = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(base_path, "DailyQuotes/{}.txt")
 
 class InvalidTickersError(Exception):
     pass
 
-def read_quotes(ticker1, ticker2):
-    stock1_quotes_df = pd.read_csv(db_path.format(ticker1), index_col="Date")
-    stock2_quotes_df = pd.read_csv(db_path.format(ticker2), index_col="Date")
 
-    stock1_close_price = stock1_quotes_df["Adj Close"]
-    stock2_close_price = stock2_quotes_df["Adj Close"]
+class Correlation:
+    def __init__(self, ticker1, ticker2):
+        self.ticker1 = ticker1
+        self.ticker2 = ticker2
+        # Path settings
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        self.db_path = os.path.join(base_path, "DailyQuotes/{}.txt")
 
-    # Set proper date format for the Chart
-    date_format = "%Y-%m-%d"
-    quotes_date = [datetime.strptime(i, date_format) for i in stock1_quotes_df.index]
-    quotes_date = matplotlib.dates.date2num(quotes_date)
-    base_date = stock1_quotes_df.index[0]
+    def read_quotes(self, symbol):
+        return pd.read_csv(self.db_path.format(symbol), index_col="Date")
 
-    return base_date, quotes_date, stock1_close_price, stock2_close_price
+    def get_close_price(self, price_data_df):
+        return price_data_df["Adj Close"]
 
-def corr_calc(base_date, quotes_date, stock1_close_price, stock2_close_price, ticker1, ticker2):
+    def get_quotes_date(self, stock1_quotes_df):
+        # Set proper date format for the Chart
+        date_format = "%Y-%m-%d"
+        quotes_date = [datetime.strptime(i, date_format) for i in stock1_quotes_df.index]
+        return matplotlib.dates.date2num(quotes_date)
 
-    stock1_perf = list(map(lambda s: s / stock1_close_price[0] * 100, stock1_close_price))
-    stock2_perf = list(map(lambda s: s / stock2_close_price[0] * 100, stock2_close_price))
+    def get_base_date(self, stock1_quotes_df):
+        return stock1_quotes_df.index[0]
 
-    stock1_log_return = np.log(stock1_close_price / stock1_close_price.shift(1))
-    stock2_log_return = np.log(stock2_close_price / stock2_close_price.shift(1))
+    def calc_close_price(self, stock1_quotes_df, stock2_quotes_df):
+        stock1_close_price = self.get_close_price(stock1_quotes_df)
+        stock2_close_price = self.get_close_price(stock2_quotes_df)
+        return stock1_close_price, stock2_close_price
 
-    corr = round(np.corrcoef(stock1_log_return[1:], stock2_log_return[1:])[0, 1], 2)
-    # print("Correlation Coefficient: ", corr)
+    def calc_performance(self, stock1_close_price, stock2_close_price):
+        stock1_perf = list(map(lambda s: s / stock1_close_price[0] * 100, stock1_close_price))
+        stock2_perf = list(map(lambda s: s / stock2_close_price[0] * 100, stock2_close_price))
+        return stock1_perf, stock2_perf
 
-    # Drawing Chart
-    p_perf1 = plt.plot(quotes_date, stock1_perf, "b")
-    p_perf2 = plt.plot(quotes_date, stock2_perf, "r")
-    # Format "Date" axis
-    plt.gca().xaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+    def calc_log_return(self, stock1_close_price, stock2_close_price):
+        stock1_log_return = np.log(stock1_close_price / stock1_close_price.shift(1))
+        stock2_log_return = np.log(stock2_close_price / stock2_close_price.shift(1))
+        return stock1_log_return, stock2_log_return
 
-    plt.title(f"{ticker1} vs. {ticker2} Performance\n(Correlation Coefficient: {corr})")
-    plt.ylabel(f"Stock Price Rebased to 100 as of {base_date}")
-    plt.xlabel("Date")
-    plt.legend((p_perf1[0], p_perf2[0]), (ticker1, ticker2), loc=2)
-    plt.grid(True)
-    plt.show()
-    return corr
+    def calc_correlation(self, stock1_log_return, stock2_log_return):
+        return round(np.corrcoef(stock1_log_return[1:], stock2_log_return[1:])[0, 1], 2)
+
+    def draw_chart(self, quotes_date, base_date, stock1_perf, stock2_perf, correlation):
+        # Drawing Chart
+        p_perf1 = plt.plot(quotes_date, stock1_perf, "b")
+        p_perf2 = plt.plot(quotes_date, stock2_perf, "r")
+        # Format "Date" axis
+        plt.gca().xaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+
+        plt.title(f"{self.ticker1} vs. {self.ticker2} Performance\n"
+                  f"(Correlation Coefficient: {correlation})")
+        plt.ylabel(f"Stock Price Rebased to 100 as of {base_date}")
+        plt.xlabel("Date")
+        plt.legend((p_perf1[0], p_perf2[0]), (self.ticker1, self.ticker2), loc=2)
+        plt.grid(True)
+        plt.show()
+
+    def run_app(self):
+        # There are pricing data for the followings
+        val_tickers = ("AMAT", "C", "JD", "MSFT", "MU", "TWTR")
+        try:
+            if self.ticker1 not in val_tickers or self.ticker2 not in val_tickers:
+                raise InvalidTickersError()
+
+            stock1_quotes_df = self.read_quotes(self.ticker1)
+            stock2_quotes_df = self.read_quotes(self.ticker2)
+            stock1_close_price, stock2_close_price \
+                    = self.calc_close_price(stock1_quotes_df, stock2_quotes_df)
+            stock1_perf, stock2_perf \
+                    = self.calc_performance(stock1_close_price, stock2_close_price)
+            stock1_log_return, stock2_log_return \
+                    = self.calc_log_return(stock1_close_price, stock2_close_price)
+            correlation = self.calc_correlation(stock1_log_return, stock2_log_return)
+            quotes_date = self.get_quotes_date(stock1_quotes_df)
+            base_date = self.get_base_date(stock1_quotes_df)
+            self.draw_chart(quotes_date, base_date, stock1_perf, stock2_perf, correlation)
+            return correlation
+
+        except InvalidTickersError:
+            print("[Error] Invalid ticker, please select one of them: (AMAT, C, JD, MSFT, MU, TWTR)")
 
 
-def run(ticker1, ticker2):
-    val_tickers = ("AMAT", "C", "JD", "MSFT", "MU", "TWTR")
-    try:
-        ticker1 = re.findall("\w+", str.upper(ticker1))[0]
-        ticker2 = re.findall("\w+", str.upper(ticker2))[0]
-
-        if ticker1 not in val_tickers or ticker2 not in val_tickers:
-            raise InvalidTickersError()
-
-        base_date, quotes_date, stock1_close, stock2_close = read_quotes(ticker1, ticker2)
-        corr = corr_calc(base_date, quotes_date, stock1_close, stock2_close, ticker1, ticker2)
-        return corr
-
-    except InvalidTickersError:
-        print("[Error] Invalid ticker, please select them from this list: (AMAT, C, JD, MSFT, MU, TWTR)")
+if __name__ == "__main__":
+    corr = Correlation("MU", "C")
+    corr.run_app()
