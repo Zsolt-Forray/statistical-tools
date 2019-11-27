@@ -1,4 +1,4 @@
-# statistical-tools
+# Statistical Tools
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3885370dc5344aeba98c088256d4865f)](https://www.codacy.com/app/forray.zsolt/statistical-tools?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Zsolt-Forray/statistical-tools&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/3885370dc5344aeba98c088256d4865f)](https://www.codacy.com/app/forray.zsolt/statistical-tools?utm_source=github.com&utm_medium=referral&utm_content=Zsolt-Forray/statistical-tools&utm_campaign=Badge_Coverage)
@@ -13,26 +13,18 @@ This project includes different statistical measures (Beta and Historical Volati
 - [Correlation Coefficient](#correlation-coefficient-calculator)
 
 ## Usage
-1.  Create a new directory somewhere.
-2.  Open the Start Menu, type `cmd` in the search field, and then press Enter.
-3.  Clone the project by running (make sure that you are in the newly created directory first!):
-```
-git clone https://github.com/Zsolt-Forray/statistical-tools.git
-```
-4.  Tools are found in the `statistical-tools` folder.
-5.  Import the selected tool.
 
-Note:  
 This project uses sample stock quotes from the `DailyQuotes` folder. If you want, you can add other stock quotes to this folder. If you add stock quotes having different timeframe, do not forget to update the other quotes accordingly.
 
-Available quotes:  
-+   Applied Materials (AMAT)
-+   Citigroup (C)
-+   JD.com (JD)
-+   Microsoft (MSFT)
-+   Micron Technology (MU)
-+   Twitter (TWTR)
-+   S&P 500 (^GSPC)
+**Available quotes:**
+
+* Applied Materials (AMAT)
+* Citigroup (C)
+* JD.com (JD)
+* Microsoft (MSFT)
+* Micron Technology (MU)
+* Twitter (TWTR)
+* S&P 500 (^GSPC)
 
 Daily Stock Quotes Sample:
 
@@ -46,9 +38,8 @@ Calculate the `Beta` of the selected stock eg. Citigroup (C).
 ```
 import beta_calculator as bc
 
-beta = bc.run("C")
-
-print(beta)
+beta = bc.Beta("C")
+beta.run_app()
 ```
 
 ### Output
@@ -64,13 +55,12 @@ Calculate the `Annual Historical Volatility` for the selected stock eg. Micron (
 ```
 import historical_volatility_calculator as hvc
 
-hv_vals = hvc.run("MU", 30)
-
-print(hv_vals)
+hv = hvc.HVol("MU", 30)
+hv.run_app()
 ```
 
 ### Output
-Tuple object, the first HV value for the stock, the second HV value for S&P500 index and HV Chart.
+Historical Volatility values for S&P500 index and the selected stock, and HV Chart.
 
 ![Screenshot](/png/hv_out.png)
 
@@ -82,9 +72,8 @@ Calculate the `Correlation Coefficient` for the selected stocks eg. Micron (MU) 
 ```
 import correlation_calculator as cc
 
-corr = cc.run("MU", "C")
-
-print(corr)
+corr = cc.Correlation("MU", "C")
+corr.run_app()
 ```
 
 ### Output
@@ -96,6 +85,5 @@ Stocks' Correlation Coefficient and Correlation Chart.
 MIT
 
 ## Contributions
-Contributions to Statistical Tools are always welcome.  
-If you have questions, suggestions or want to improve this repository, please create an [issue](https://github.com/Zsolt-Forray/statistical-tools/issues) or [pull requests](https://github.com/Zsolt-Forray/statistical-tools/pulls).  
+Contributions to this repository are always welcome.
 This repo is maintained by Zsolt Forray (forray.zsolt@gmail.com).
