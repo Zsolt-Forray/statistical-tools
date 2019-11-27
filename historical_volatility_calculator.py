@@ -61,18 +61,21 @@ class HVol:
     def read_quotes(self, symbol):
         return pd.read_csv(self.db_path.format(symbol), index_col="Date")
 
-    def get_close_price(self, price_data_df):
+    @staticmethod
+    def get_close_price(price_data_df):
         return price_data_df["Adj Close"]
 
-    def get_quotes_date(self, stock_quotes_df):
+    @staticmethod
+    def get_quotes_date(stock_quotes_df):
         # Set proper date format for the Chart
         date_format = "%Y-%m-%d"
         quotes_date = [datetime.strptime(i, date_format) for i in stock_quotes_df.index]
         return matplotlib.dates.date2num(quotes_date)
 
-    def calc_log_return(self, snp_quotes_df, stock_quotes_df):
-        snp_close_price = self.get_close_price(snp_quotes_df)
-        stock_close_price = self.get_close_price(stock_quotes_df)
+    @staticmethod
+    def calc_log_return(snp_quotes_df, stock_quotes_df):
+        snp_close_price = HVol.get_close_price(snp_quotes_df)
+        stock_close_price = HVol.get_close_price(stock_quotes_df)
 
         stock_log_return = np.log(stock_close_price / stock_close_price.shift(1))
         snp_log_return = np.log(snp_close_price / snp_close_price.shift(1))
@@ -82,7 +85,8 @@ class HVol:
         std_df = log_return.rolling(window=self.period, center=False).std(ddof=1)
         return np.sqrt(252) * std_df * 100
 
-    def calc_annual_hv(self, ann_std_df):
+    @staticmethod
+    def calc_annual_hv(ann_std_df):
         return "{0:.2f}%".format(ann_std_df.iloc[-1])
 
     def draw_chart(self, quotes_date, ann_stock_std_df, ann_stock_hv, \
@@ -118,12 +122,12 @@ class HVol:
             snp_quotes_df = self.read_quotes("^GSPC")
             stock_quotes_df = self.read_quotes(self.ticker)
             snp_log_return, stock_log_return \
-                        = self.calc_log_return(snp_quotes_df, stock_quotes_df)
+                        = HVol.calc_log_return(snp_quotes_df, stock_quotes_df)
             ann_snp_std_df = self.calc_annual_hv_series(snp_log_return)
             ann_stock_std_df = self.calc_annual_hv_series(stock_log_return)
-            ann_snp_hv = self.calc_annual_hv(ann_snp_std_df)
-            ann_stock_hv = self.calc_annual_hv(ann_stock_std_df)
-            quotes_date = self.get_quotes_date(stock_quotes_df)
+            ann_snp_hv = HVol.calc_annual_hv(ann_snp_std_df)
+            ann_stock_hv = HVol.calc_annual_hv(ann_stock_std_df)
+            quotes_date = HVol.get_quotes_date(stock_quotes_df)
             self.draw_chart(quotes_date, ann_stock_std_df, ann_stock_hv, \
                             ann_snp_std_df, ann_snp_hv)
             return ann_stock_hv, ann_snp_hv
