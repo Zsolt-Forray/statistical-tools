@@ -91,7 +91,7 @@ class Beta:
         plt.gca().set_xticklabels(["{:.0f}%".format(x*100) for x in plt.gca().get_xticks()])
         plt.gca().set_yticklabels(["{:.0f}%".format(y*100) for y in plt.gca().get_yticks()])
 
-        plt.title(f"Beta Chart\n(Beta Coefficient: {beta})")
+        plt.title("Beta Chart\n(Beta Coefficient: {})".format(beta))
         plt.ylabel(f"Stock ({self.ticker}) Return (%)")
         plt.xlabel("S&P 500 Index Return (%)")
         plt.legend((p_obs[0], p_regl[0]), ("Return Observations", "Regression Line"))
