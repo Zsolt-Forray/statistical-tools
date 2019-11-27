@@ -38,7 +38,6 @@ from matplotlib import pyplot as plt
 from matplotlib import dates as mdates
 from matplotlib import ticker as mticker
 from datetime import datetime
-import re
 
 
 class InvalidTickersError(Exception):
@@ -56,34 +55,40 @@ class Correlation:
     def read_quotes(self, symbol):
         return pd.read_csv(self.db_path.format(symbol), index_col="Date")
 
-    def get_close_price(self, price_data_df):
+    @staticmethod
+    def get_close_price(price_data_df):
         return price_data_df["Adj Close"]
 
-    def get_quotes_date(self, stock1_quotes_df):
+    @staticmethod
+    def get_quotes_date(stock1_quotes_df):
         # Set proper date format for the Chart
         date_format = "%Y-%m-%d"
         quotes_date = [datetime.strptime(i, date_format) for i in stock1_quotes_df.index]
         return matplotlib.dates.date2num(quotes_date)
 
-    def get_base_date(self, stock1_quotes_df):
+    @staticmethod
+    def get_base_date(stock1_quotes_df):
         return stock1_quotes_df.index[0]
 
     def calc_close_price(self, stock1_quotes_df, stock2_quotes_df):
-        stock1_close_price = self.get_close_price(stock1_quotes_df)
-        stock2_close_price = self.get_close_price(stock2_quotes_df)
+        stock1_close_price = Correlation.get_close_price(stock1_quotes_df)
+        stock2_close_price = Correlation.get_close_price(stock2_quotes_df)
         return stock1_close_price, stock2_close_price
 
-    def calc_performance(self, stock1_close_price, stock2_close_price):
+    @staticmethod
+    def calc_performance(stock1_close_price, stock2_close_price):
         stock1_perf = list(map(lambda s: s / stock1_close_price[0] * 100, stock1_close_price))
         stock2_perf = list(map(lambda s: s / stock2_close_price[0] * 100, stock2_close_price))
         return stock1_perf, stock2_perf
 
-    def calc_log_return(self, stock1_close_price, stock2_close_price):
+    @staticmethod
+    def calc_log_return(stock1_close_price, stock2_close_price):
         stock1_log_return = np.log(stock1_close_price / stock1_close_price.shift(1))
         stock2_log_return = np.log(stock2_close_price / stock2_close_price.shift(1))
         return stock1_log_return, stock2_log_return
 
-    def calc_correlation(self, stock1_log_return, stock2_log_return):
+    @staticmethod
+    def calc_correlation(stock1_log_return, stock2_log_return):
         return round(np.corrcoef(stock1_log_return[1:], stock2_log_return[1:])[0, 1], 2)
 
     def draw_chart(self, quotes_date, base_date, stock1_perf, stock2_perf, correlation):
@@ -114,12 +119,12 @@ class Correlation:
             stock1_close_price, stock2_close_price \
                     = self.calc_close_price(stock1_quotes_df, stock2_quotes_df)
             stock1_perf, stock2_perf \
-                    = self.calc_performance(stock1_close_price, stock2_close_price)
+                    = Correlation.calc_performance(stock1_close_price, stock2_close_price)
             stock1_log_return, stock2_log_return \
-                    = self.calc_log_return(stock1_close_price, stock2_close_price)
-            correlation = self.calc_correlation(stock1_log_return, stock2_log_return)
-            quotes_date = self.get_quotes_date(stock1_quotes_df)
-            base_date = self.get_base_date(stock1_quotes_df)
+                    = Correlation.calc_log_return(stock1_close_price, stock2_close_price)
+            correlation = Correlation.calc_correlation(stock1_log_return, stock2_log_return)
+            quotes_date = Correlation.get_quotes_date(stock1_quotes_df)
+            base_date = Correlation.get_base_date(stock1_quotes_df)
             self.draw_chart(quotes_date, base_date, stock1_perf, stock2_perf, correlation)
             return correlation
 
