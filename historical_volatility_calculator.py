@@ -98,8 +98,9 @@ class HVol:
         plt.gca().xaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
 
-        plt.title(f"{self.ticker} vs. S&P 500 Index Historical Volatility\n"
-                  f"(Stock HV: {ann_stock_hv} | Index HV: {ann_snp_hv} | Period: {self.period})")
+        plt.title("{} vs. S&P 500 Index Historical Volatility\n".format(self.ticker)
+                  + "(Stock HV: {} | Index HV: {} | Period: {})"\
+                    .format(ann_stock_hv, ann_snp_hv, self.period))
         plt.ylabel("Annual Historical Volatility (%)")
         plt.xlabel("Date")
         plt.legend((p_hv1[0], p_hv2[0]), (self.ticker, "S&P 500 Index"), loc=2)
