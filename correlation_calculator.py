@@ -100,9 +100,9 @@ class Correlation:
         plt.gca().xaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
 
-        plt.title(f"{self.ticker1} vs. {self.ticker2} Performance\n"
-                  f"(Correlation Coefficient: {correlation})")
-        plt.ylabel(f"Stock Price Rebased to 100 as of {base_date}")
+        plt.title("{} vs. {} Performance\n(Correlation Coefficient: {})"\
+                  .format(self.ticker1, self.ticker2, correlation))
+        plt.ylabel("Stock Price Rebased to 100 as of {}".format(base_date))
         plt.xlabel("Date")
         plt.legend((p_perf1[0], p_perf2[0]), (self.ticker1, self.ticker2), loc=2)
         plt.grid(True)
