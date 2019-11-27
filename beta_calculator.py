@@ -51,7 +51,7 @@ class Beta:
         return pd.read_csv(self.db_path.format(symbol), index_col="Date")
 
     @staticmethod
-    def get_close_price(self, price_data_df):
+    def get_close_price(price_data_df):
         return price_data_df["Adj Close"]
 
     def calc_log_return(self):
@@ -66,7 +66,7 @@ class Beta:
         return snp_log_return, stock_log_return
 
     @staticmethod
-    def calc_beta(self, snp_log_return, stock_log_return):
+    def calc_beta(snp_log_return, stock_log_return):
         cov_matrix = np.cov(stock_log_return[1:], snp_log_return[1:])
         # Covariance
         cov = cov_matrix[0,1]
@@ -78,7 +78,7 @@ class Beta:
         return beta
 
     @staticmethod
-    def calc_regression_line(self, snp_log_return, stock_log_return):
+    def calc_regression_line(snp_log_return, stock_log_return):
         # To calculate the regression line
         slope, intercept = linregress(snp_log_return[1:], stock_log_return[1:])[:2]
         return slope, intercept
