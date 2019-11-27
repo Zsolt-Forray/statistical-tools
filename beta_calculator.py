@@ -58,8 +58,8 @@ class Beta:
         snp_quotes_df = self.read_quotes("^GSPC")
         stock_quotes_df = self.read_quotes(self.ticker)
 
-        snp_close_price = get_close_price(snp_quotes_df)
-        stock_close_price = get_close_price(stock_quotes_df)
+        snp_close_price = Beta.get_close_price(snp_quotes_df)
+        stock_close_price = Beta.get_close_price(stock_quotes_df)
 
         stock_log_return = np.log(stock_close_price / stock_close_price.shift(1))
         snp_log_return = np.log(snp_close_price / snp_close_price.shift(1))
@@ -106,8 +106,8 @@ class Beta:
                 raise InvalidTickersError()
 
             snp_log_return, stock_log_return = self.calc_log_return()
-            beta = calc_beta(snp_log_return, stock_log_return)
-            slope, intercept = calc_regression_line(snp_log_return, stock_log_return)
+            beta = Beta.calc_beta(snp_log_return, stock_log_return)
+            slope, intercept = Beta.calc_regression_line(snp_log_return, stock_log_return)
             self.draw_chart(snp_log_return, stock_log_return, slope, intercept, beta)
             return beta
 
