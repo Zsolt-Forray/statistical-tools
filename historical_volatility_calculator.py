@@ -113,7 +113,7 @@ class HVol:
             if self.ticker not in val_tickers:
                 raise InvalidTickersError()
 
-            elif float(self.period).is_integer() == False:
+            elif not float(self.period).is_integer():
                 raise PeriodError()
 
             elif float(self.period) < 2 or float(self.period) >= 100:
